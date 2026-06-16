@@ -21,4 +21,21 @@ jobs:
         run: pip install requests beautifulsoup4
 
       - name: Execute PropGuard Radar Script
-        run: python agent.py
+        id: run_script
+        run: |
+          # Run the script and save the full output to a text file
+          python agent.py > radar_output.txt
+          cat radar_output.txt
+          
+          # Check if the output contains any found updates
+          if grep -q "Found [1-9][0-9]* potential" radar_output.txt; then
+            echo "updates_found=true" >> $GITHUB_ENV
+          else
+            echo "updates_found=false" >> $GITHUB_ENV
+          }
+
+      - name: Send Email Alert if Updates Found
+        if: env.updates_found == 'true'
+        run: |
+          echo "Radar alert triggered! Check your GitHub Actions logs to see the live regulatory updates."
+          exit 1 # This forces GitHub to mark the run as 'Failed' (Red), which triggers an instant email alert to your inbox!
