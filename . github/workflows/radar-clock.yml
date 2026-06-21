@@ -1,7 +1,7 @@
 name: PropGuard Compliance Radar Loop
 
-on:
-  schedule:
+#on:
+ # schedule:
     - cron: '0 4 * * *'
   workflow_dispatch:
 
